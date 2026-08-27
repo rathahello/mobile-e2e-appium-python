@@ -1,0 +1,10 @@
+{
+  "virtual": {
+    "device_name": "emulator-5554",
+    "version": "11"
+  },
+  "real": {
+    "device_name": "R3CMA0EVPMH",
+    "version": "12"
+  }
+}

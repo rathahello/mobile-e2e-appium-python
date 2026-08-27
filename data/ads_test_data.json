@@ -1,0 +1,24 @@
+{
+  "create_ads": {
+    "property_info": {
+      "title": "Create Ads",
+      "price": 25000,
+      "monthly_payment": 500,
+      "property_code": "PROP12345",
+      "description": "Automatic ad creation for your property listing."
+    },
+    "specifications": {
+        "land_size": 10000,
+        "road_size": 5000,
+        "home_size": 2000,
+        "floor_count": 2,
+        "bedrooms": 3,
+        "bathrooms": 2,
+        "square_feet": 1500,
+        "year_built": 2015
+    },
+    "location": {
+      "address": "123 Main St, Anytown, CA 12345"
+    }
+  }
+}

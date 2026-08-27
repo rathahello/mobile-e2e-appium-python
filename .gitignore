@@ -1,0 +1,9 @@
+#Python virtual environment
+.venv/
+# Python cache
+__pycache__/
+#*.py[code]
+#IDE
+.idea/
+# Ignore apk file
+utils/apk
