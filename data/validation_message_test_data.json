@@ -1,0 +1,8 @@
+{
+  "message": {
+    "invalid_cred": "User credentials are incorrect",
+    "user_not_verify": "The user is not verified. Please contact the administrator",
+    "account_deleted": "This account no longer exists",
+    "account_rejected": "User credentials are incorrect"
+  }
+}

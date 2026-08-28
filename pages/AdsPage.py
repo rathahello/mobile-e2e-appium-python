@@ -16,7 +16,7 @@ class AdvertisementPage:
 
     def addPhoto(self, numOfPhoto):
         self.custom_page.customScrollToEnd(10)
-        self.custom_page.customAccessibleClick("Add Photos")
+        self.custom_page.customScrollView("Add Photos")
         self.custom_page.customAccessibleClick("Gallery")
         access_photo = self.driver.find_element(AppiumBy.ID, 'com.android.permissioncontroller:id/permission_message')
         if access_photo.is_displayed():
@@ -54,11 +54,7 @@ class AdvertisementPage:
                 EC.element_to_be_clickable((AppiumBy.XPATH, '//android.widget.Button'))
             ).click()
             if subCategory == "Land":
-                self.wait.until(
-                    EC.element_to_be_clickable(
-                        (AppiumBy.XPATH, '//android.view.View[contains(@content-desc, "Sub Category\nHouse")]')
-                    )
-                ).click()
+                self.custom_page.customXpathClick("android.view.View", "Sub Category\nHouse")
                 self.wait.until(
                     EC.element_to_be_clickable(
                         (AppiumBy.XPATH, '//android.widget.ImageView[@content-desc="Land"]')

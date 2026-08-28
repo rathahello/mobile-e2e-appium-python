@@ -20,7 +20,7 @@ class UserManagementPage:
         self.custom_page.customAccessibleClick("Settings")
 
     def navigateToUserManagement(self):
-        self.custom_page.customXpathBtnClick("User Management")
+        self.custom_page.customXpathClick("android.widget.Button", "User Management")
 
     def navigateToEachTabs(self, desc, numOfTabs):
         self.wait.until(
@@ -59,10 +59,16 @@ class UserManagementPage:
                     )
                     comment.click()
                     comment.send_keys("Rejected")
-                    self.custom_page.customXpathBtnClick("Reject")
-                    print("User is rejected successfully")
+                    self.custom_page.customXpathClick("android.widget.Button", "Reject")
+                success_msg = self.wait.until(
+                    EC.visibility_of_element_located(
+                        (AppiumBy.XPATH, '//android.view.View[contains(@content-desc, "has been rejected")]')
+                    )
+                )
+                if success_msg.is_displayed():
                     self.custom_page.generate_screenshot("user_rejected_successfully")
-                self.custom_page.customAccessibleClick("OK")
+                    self.custom_page.customAccessibleClick("OK")
+                    print("User is rejected successfully")
         except Exception as error:
             self.custom_page.generate_screenshot("rejected_failed")
             print(error)
@@ -76,108 +82,33 @@ class UserManagementPage:
                     (AppiumBy.XPATH, f'//android.widget.ImageView[contains(@content-desc, "{staffId}")]')
                 )
             )
-            contain_desc = check_user.get_attribute("content-desc")
-            if staffId in contain_desc:
-                print("Contain Description: ", contain_desc)
+            content_desc = check_user.get_attribute("content-desc")
+            if staffId in content_desc:
                 self.wait.until(
                     EC.element_to_be_clickable(
                         (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().description("Approve").instance(0)')
                     )
                 ).click()
-                self.wait.until(
-                    EC.element_to_be_clickable(
-                        (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().description("Administrator Full Management")')
-                    )
-                ).click()
+                self.custom_page.customXpathClick("android.view.View", "Administrator")
                 enter_cmt = self.wait.until(
-                    EC.visibility_of_element_located(
-                        (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().className("android.widget.EditText")')
-                    )
+                    EC.element_to_be_clickable((AppiumBy.XPATH, '//android.widget.EditText'))
                 )
                 enter_cmt.click()
                 enter_cmt.send_keys("Approved")
-                approve_btn = self.wait.until(
-                    EC.element_to_be_clickable(
-                        (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().description("Approve")')
-                    )
-                )
-                approve_btn.click()
-                message = self.wait.until(
+                self.custom_page.customXpathClick("android.widget.Button", "Approve")
+                confirm_msg = self.wait.until(
                     EC.visibility_of_element_located(
-                        (AppiumBy.XPATH, f'//android.view.View[contains(@content-desc, "approved successfully")]')
+                        (AppiumBy.XPATH, '//android.view.View[contains(@content-desc, "approved successfully")]')
                     )
                 )
-                resp_msg = message.get_attribute("content-desc")
-                if "approved successfully" in resp_msg:
-                    print(resp_msg)
-                    self.custom_page.generate_screenshot("Approved_successfully")
+                if confirm_msg.is_displayed():
+                    print("Confirm Message: ", confirm_msg.get_attribute("content-desc"))
+                    self.custom_page.generate_screenshot("user_approved_successfully")
                     self.custom_page.customAccessibleClick("OK")
+                    print("User is approved successfully")
         except Exception as error:
-            self.custom_page.generate_screenshot("Approved_failed")
+            self.custom_page.generate_screenshot("user_approves_failed")
             print(error)
 
     def userDeletion(self, staffId):
         self.navigateToEachTabs("Delete Requests", 4)
-
-    def verifyUserApproved(self, staffId):
-        try:
-            self.navigateToUserManagement()
-            self.navigateToEachTabs("Approved", 2)
-            # User approved should be displaying
-            check_user = self.wait.until(
-                EC.visibility_of_element_located(
-                    (AppiumBy.XPATH, f'//android.widget.ImageView[contains(@content-desc, "{staffId}")]')
-                )
-            )
-            contain_desc = check_user.get_attribute("content-desc")
-            if staffId in contain_desc:
-                print("Contain Description: ", contain_desc)
-                self.custom_page.generate_screenshot("verify_user_approved_success")
-        except Exception as error:
-            print(error)
-
-    def verifyUserRejected(self, staffId):
-        try:
-            self.navigateToUserManagement()
-            self.navigateToEachTabs("Rejected", 3)
-            # User rejected should be displaying
-            check_user = self.wait.until(
-                EC.visibility_of_element_located(
-                    (AppiumBy.XPATH, f'//android.widget.ImageView[contains(@content-desc, "{staffId}")]')
-                )
-            )
-            contain_desc = check_user.get_attribute("content-desc")
-            if staffId in contain_desc:
-                print("Contain Description: ", contain_desc)
-                self.custom_page.generate_screenshot("verify_user_rejected_success")
-        except Exception as error:
-            print(error)
-
-    def verifyUserDeleted(self, staffId):
-        try:
-            self.navigateToUserManagement()
-            self.navigateToEachTabs(4)
-            # User deleted should be displaying
-            check_user = self.wait.until(
-                EC.visibility_of_element_located(
-                    (AppiumBy.XPATH, f'//android.widget.ImageView[contains(@content-desc, "{staffId}")]')
-                )
-            )
-            contain_desc = check_user.get_attribute("content-desc")
-            if staffId in contain_desc:
-                print("Contain Description: ", contain_desc)
-                self.custom_page.generate_screenshot("verify_user_deleted_success")
-
-            # self.login_page.enterLoginForm(username, password)
-            # time.sleep(3)
-            # response_message = self.driver.find_element(
-            #     AppiumBy.XPATH,
-            #     '//android.view.View[@content-desc="This account no longer exists"]'
-            # )
-            # expected_msg = "This account no longer exists"
-            # actual_msg = response_message.get_attribute("content-desc")
-            # assert expected_msg == actual_msg, f"Expected: '{expected_msg}', but got: '{actual_msg}'"
-            # print(f"Expected Result: '{expected_msg}', Actual Result: '{actual_msg}'")
-        except Exception as error:
-            self.custom_page.generate_screenshot("verify_user_deleted_failed")
-            print(error)

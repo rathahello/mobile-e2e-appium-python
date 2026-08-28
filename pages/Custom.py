@@ -64,14 +64,13 @@ class CustomPage:
         self.driver.find_element(
             AppiumBy.ANDROID_UIAUTOMATOR, f'new UiScrollable(new UiSelector().scrollable(true)).scrollToBeginning({scroll})'
         )
-    def customScrollView(self, value):
-        self.wait.until(
-            EC.element_to_be_clickable(
-                (AppiumBy.ANDROID_UIAUTOMATOR,
-                 f'new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().description("{value}"))'
-                 )
-            )
-        ).click()
+    def customScrollView(self, selector):
+        element = self.driver.find_element(
+            AppiumBy.ANDROID_UIAUTOMATOR,
+            'new UiScrollable(new UiSelector().scrollable(true))'
+            f'.scrollIntoView(new UiSelector().descriptionContains("{selector}"))'
+        )
+        element.click()
     def customAccessibleClick(self, value):
         self.wait.until(
             EC.element_to_be_clickable(
@@ -100,6 +99,13 @@ class CustomPage:
         element = self.wait.until(
             EC.element_to_be_clickable(
                 (AppiumBy.XPATH, f'//android.widget.Button[contains(@content-desc, "{label}")]')
+            )
+        )
+        element.click()
+    def customXpathClick(self, xpath, label):
+        element = self.wait.until(
+            EC.element_to_be_clickable(
+                (AppiumBy.XPATH, f'//{xpath}[contains(@content-desc, "{label}")]')
             )
         )
         element.click()

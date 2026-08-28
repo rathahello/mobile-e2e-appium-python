@@ -45,9 +45,7 @@ class RegisterPage:
             print(error)
     def registerSuccessful(self, staffId, userId, phoneNumber, dob, email, password):
         try:
-            self.wait.until(
-                EC.element_to_be_clickable((AppiumBy.ACCESSIBILITY_ID, "Sign in"))
-            ).click()
+            self.custom_page.customAccessibleClick("Sign in")
             self.driver.press_keycode(AndroidKey.BACK)
             self.enterValueOnForm(staffId, userId, phoneNumber, dob, email, password)
             confirm = self.wait.until(

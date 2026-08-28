@@ -62,40 +62,22 @@ class TestLoginPage:
 
     def test_logout(self):
         try:
-            self.wait.until(
-                EC.element_to_be_clickable(
-                    (AppiumBy.XPATH, '//android.view.View[@content-desc="Profile"]')
+            self.custom_page.customScrollView("Sign Out")
+            confirm_msg = self.wait.until(
+                EC.visibility_of_element_located(
+                    (AppiumBy.XPATH, '//android.view.View[@content-desc="Are you sure you want to logout?"]')
                 )
-            ).click()
-            self.wait.until(
-                EC.element_to_be_clickable(
-                    (AppiumBy.XPATH, '//android.view.View[contains(@content-desc, "View Profile")]')
-                )
-            ).click()
-            element = self.driver.find_element(
-                AppiumBy.ANDROID_UIAUTOMATOR,
-                'new UiScrollable(new UiSelector().scrollable(true))'
-                '.scrollIntoView(new UiSelector().descriptionContains("Sign Out"))'
             )
-            element.click()
-            # validate message
-            confirm_msg = self.driver.find_element(
-                AppiumBy.XPATH,
-                '//android.view.View[@content-desc="Are you sure you want to logout?"]'
-            )
-            print(confirm_msg.get_attribute("content-desc"))
             if confirm_msg.is_displayed():
-                self.wait.until(
-                    EC.element_to_be_clickable(
-                        (AppiumBy.XPATH, '//android.widget.Button[@content-desc="Logout"]')
-                    )
-                ).click()
-            print(f"Logout Successful")
+                print(confirm_msg.get_attribute("content-desc"))
+                self.custom_page.customXpathClick("android.widget.Button", "Logout")
+            time.sleep(1)
             self.driver.press_keycode(AndroidKey.BACK)
             msg = "Best Property Sale"
-            expected_msg = self.driver.find_element(
-                AppiumBy.ACCESSIBILITY_ID, f'{msg}'
+            expected_msg = self.wait.until(
+                EC.visibility_of_element_located((AppiumBy.ACCESSIBILITY_ID, f'{msg}'))
             )
             assert expected_msg.is_displayed()
+            print(f"Logout Successful")
         except Exception as error:
             print(error)

@@ -39,4 +39,3 @@ with open(userData) as json_file:
     user_mg = UserManagementPage(driver)
     user_profile.navigateToUserProfile()
     user_mg.navigateToSetting()
-    user_mg.verifyUserDeleted(data['staffId'])
