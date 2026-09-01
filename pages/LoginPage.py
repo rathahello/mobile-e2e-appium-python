@@ -1,3 +1,4 @@
+import json
 import time
 from appium.webdriver.common.appiumby import AppiumBy
 from selenium.webdriver.support.wait import WebDriverWait
@@ -12,7 +13,7 @@ class TestLoginPage:
         self.wait = WebDriverWait(self.driver, 20)
         self.custom_page = CustomPage(self.driver)
 
-    def test_sign_in_btn(self, label):
+    def signInBtn(self, label):
         self.custom_page.customAccessibleClick(label)
 
     def enterLoginForm(self, username, password):
@@ -33,7 +34,7 @@ class TestLoginPage:
         self.driver.press_keycode(AndroidKey.BACK)
         self.driver.find_element( AppiumBy.XPATH, '//android.widget.Button[@content-desc="Sign in"]').click()
 
-    def test_login_successful(self, username, password):
+    def userLoginSuccessful(self, username, password):
         try:
             self.enterLoginForm(username, password)
             time.sleep(3)
@@ -45,7 +46,7 @@ class TestLoginPage:
         except Exception as error:
             print("Login Failed", error)
 
-    def test_login_in_valid_cred(self, username, password, expected_msg):
+    def userLoginInvalidCred(self, username, password, expected_msg):
         try:
             self.enterLoginForm(username, password)
             time.sleep(3)
@@ -60,7 +61,7 @@ class TestLoginPage:
         except Exception as error:
             print(error)
 
-    def test_logout(self):
+    def userLogout(self):
         try:
             self.custom_page.customScrollView("Sign Out")
             confirm_msg = self.wait.until(

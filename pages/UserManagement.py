@@ -12,34 +12,20 @@ class UserManagementPage:
         self.login_page = TestLoginPage(self.driver)
 
     def navigateToSetting(self):
-        self.wait.until(
-            EC.element_to_be_clickable(
-                (AppiumBy.XPATH, '//android.view.View[contains(@content-desc, "View Profile")]')
-            )
-        ).click()
+        self.custom_page.customXpathClickLabel("View Profile")
         self.custom_page.customAccessibleClick("Settings")
 
-    def navigateToUserManagement(self):
-        self.custom_page.customXpathClick("android.widget.Button", "User Management")
-
-    def navigateToEachTabs(self, desc, numOfTabs):
-        self.wait.until(
-            EC.element_to_be_clickable(
-                (AppiumBy.ANDROID_UIAUTOMATOR, f'new UiSelector().description("{desc}\nTab {numOfTabs} of 4")')
-            )
-        ).click()
-
-    def userRejection(self, staffId):
+    def userRejection(self, userId):
         try:
             self.navigateToSetting()
-            self.navigateToUserManagement()
+            self.custom_page.customXpathClickLabel("User Management")
             check_user = self.wait.until(
                 EC.visibility_of_element_located(
-                    (AppiumBy.XPATH, f'//android.widget.ImageView[contains(@content-desc, "{staffId}")]')
+                    (AppiumBy.XPATH, f'//android.widget.ImageView[contains(@content-desc, "{userId}")]')
                 )
             )
             contain_desc = check_user.get_attribute("content-desc")
-            if staffId in contain_desc:
+            if userId in contain_desc:
                 self.wait.until(
                     EC.element_to_be_clickable(
                         (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().description("Reject").instance(0)')
@@ -51,7 +37,6 @@ class UserManagementPage:
                     )
                 )
                 if confirm_msg.is_displayed():
-                    print(confirm_msg.get_attribute("content-desc"))
                     comment = self.wait.until(
                         EC.element_to_be_clickable(
                             (AppiumBy.XPATH, '//android.widget.EditText')
@@ -73,32 +58,32 @@ class UserManagementPage:
             self.custom_page.generate_screenshot("rejected_failed")
             print(error)
 
-    def userApproval(self, staffId):
+    def userApproval(self, user_id, user_role):
         try:
             self.navigateToSetting()
-            self.navigateToUserManagement()
+            self.custom_page.customXpathClickLabel("User Management")
             check_user = self.wait.until(
                 EC.visibility_of_element_located(
-                    (AppiumBy.XPATH, f'//android.widget.ImageView[contains(@content-desc, "{staffId}")]')
+                    (AppiumBy.XPATH, f'//*[contains(@content-desc, "{user_id}")]')
                 )
             )
             content_desc = check_user.get_attribute("content-desc")
-            if staffId in content_desc:
+            if user_id in content_desc:
                 self.wait.until(
                     EC.element_to_be_clickable(
                         (AppiumBy.ANDROID_UIAUTOMATOR, 'new UiSelector().description("Approve").instance(0)')
                     )
                 ).click()
-                self.custom_page.customXpathClick("android.view.View", "Administrator")
+                self.custom_page.customXpathClickLabel(user_role)
                 enter_cmt = self.wait.until(
                     EC.element_to_be_clickable((AppiumBy.XPATH, '//android.widget.EditText'))
                 )
                 enter_cmt.click()
                 enter_cmt.send_keys("Approved")
-                self.custom_page.customXpathClick("android.widget.Button", "Approve")
+                self.custom_page.customXpathClickLabel("Approve")
                 confirm_msg = self.wait.until(
                     EC.visibility_of_element_located(
-                        (AppiumBy.XPATH, '//android.view.View[contains(@content-desc, "approved successfully")]')
+                        (AppiumBy.XPATH, '//*[contains(@content-desc, "approved successfully")]')
                     )
                 )
                 if confirm_msg.is_displayed():
@@ -110,5 +95,41 @@ class UserManagementPage:
             self.custom_page.generate_screenshot("user_approves_failed")
             print(error)
 
-    def userDeletion(self, staffId):
-        self.navigateToEachTabs("Delete Requests", 4)
+    def userRequestDelete(self, user_id):
+        try:
+            self.navigateToSetting()
+            self.custom_page.customXpathClickLabel("User Management")
+            self.verifyUser(user_id, "Delete Requests")
+            self.custom_page.customAccessibleClick("Approve Deletion")
+            confirm_msg = self.wait.until(
+                EC.visibility_of_element_located(
+                    (AppiumBy.XPATH, '//*[contains(@content-desc, "Approve account deletion")]')
+                )
+            )
+            if confirm_msg.is_displayed():
+                print("Confirm Message: ", confirm_msg.get_attribute("content-desc"))
+                self.custom_page.customAccessibleClick("Approve")
+                success_msg = self.wait.until(
+                    EC.visibility_of_element_located(
+                        (AppiumBy.XPATH, '//*[contains(@content-desc, "account deletion has been approved")]')
+                    )
+                )
+                content_desc = success_msg.get_attribute("content-desc")
+                if success_msg.is_displayed():
+                    self.custom_page.generate_screenshot(content_desc)
+                    self.custom_page.customAccessibleClick("OK")
+        except Exception as error:
+            print(error)
+
+    def verifyUser(self, user_id, tab):
+        try:
+            self.custom_page.customXpathClick("android.view.View", f"{tab}")
+            user_rejected = self.driver.find_element(
+                AppiumBy.XPATH, f'//*[contains(@content-desc, "{user_id}")]'
+            )
+            contain_desc = user_rejected.get_attribute("content-desc")
+            assert user_id in contain_desc
+            print(f"Expected: '{user_id}' in '{contain_desc}'")
+            self.custom_page.generate_screenshot("user_" + tab )
+        except Exception as error:
+            print(error)

@@ -113,7 +113,6 @@ class AdvertisementPage:
             self.driver.press_keycode(AndroidKey.BACK)
             self.custom_page.customAccessibleClick("Post")
             submit_btn = self.driver.find_element(AppiumBy.ACCESSIBILITY_ID, 'Are you sure you want to create this post?')
-            print(submit_btn.get_attribute('content-desc'))
             if submit_btn.is_displayed():
                 self.wait.until(
                     EC.element_to_be_clickable(
@@ -125,7 +124,6 @@ class AdvertisementPage:
                     (AppiumBy.ACCESSIBILITY_ID, 'Advertisement is created successfully')
                 )
             )
-            print(confirm_btn.get_attribute('content-desc'))
             if confirm_btn.is_displayed():
                 self.custom_page.customAccessibleClick("OK")
             self.custom_page.generate_screenshot("create_ads_success_" + currentDate)
@@ -149,14 +147,13 @@ class AdvertisementPage:
             confirm_msg = self.wait.until(
                 EC.element_to_be_clickable((AppiumBy.ACCESSIBILITY_ID, "Are you sure you want to update this post?"))
             )
-            print(confirm_msg.get_attribute('content-desc'))
             if confirm_msg.is_displayed():
                 self.custom_page.customAccessibleClick("Update")
             success_msg = self.wait.until(
                 EC.visibility_of_element_located((AppiumBy.ACCESSIBILITY_ID, 'Advertisement is updated successfully'))
             )
-            print(success_msg.get_attribute('content-desc'))
             if success_msg.is_displayed():
+                print("Confirm Message: ", success_msg.get_attribute('content-desc'))
                 self.custom_page.customAccessibleClick("OK")
             self.custom_page.generate_screenshot("update_ads_success" + currentDate)
         except Exception as error:

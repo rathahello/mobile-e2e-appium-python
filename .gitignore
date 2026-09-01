@@ -7,3 +7,5 @@ __pycache__/
 .idea/
 # Ignore apk file
 utils/apk
+# Ignore screenshots
+features/screenshots/

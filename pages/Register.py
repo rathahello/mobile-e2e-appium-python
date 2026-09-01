@@ -10,7 +10,7 @@ class RegisterPage:
         self.driver = driver
         self.wait = WebDriverWait(self.driver, 20)
         self.custom_page = CustomPage(self.driver)
-    def enterValueOnForm(self, staffId, userId, phoneNumber, dob, email, password):
+    def enterRegisterForm(self, staffId, userId, phoneNumber, dob, email, password):
         try:
             self.custom_page.customAccessibleClick("Don't have an account?")
             self.custom_page.customUiAutoIndexValue(0, staffId)
@@ -47,15 +47,17 @@ class RegisterPage:
         try:
             self.custom_page.customAccessibleClick("Sign in")
             self.driver.press_keycode(AndroidKey.BACK)
-            self.enterValueOnForm(staffId, userId, phoneNumber, dob, email, password)
-            confirm = self.wait.until(
+            self.enterRegisterForm(staffId, userId, phoneNumber, dob, email, password)
+            confirm_msg = self.wait.until(
                 EC.visibility_of_element_located(
-                    (AppiumBy.ACCESSIBILITY_ID, 'Your account is currently pending approval. We will notify you once it has been activated.')
+                    (AppiumBy.XPATH, '//*[contains(@content-desc, "Your account is currently pending approval")]')
                 )
             )
-            print(confirm.get_attribute('content-desc'))
-            self.custom_page.generate_screenshot("register_success")
-            self.custom_page.customAccessibleClick("OK")
+            content_desc = confirm_msg.get_attribute('content-desc')
+            if confirm_msg.is_displayed():
+                print("Response message: ", content_desc)
+                self.custom_page.generate_screenshot("register_success")
+                self.custom_page.customAccessibleClick("OK")
         except Exception as error:
             self.custom_page.generate_screenshot("register_failed")
             print(error)
@@ -65,14 +67,13 @@ class RegisterPage:
                 EC.element_to_be_clickable((AppiumBy.ACCESSIBILITY_ID, "Sign in"))
             ).click()
             self.driver.press_keycode(AndroidKey.BACK)
-            self.enterValueOnForm(staffId, userId, phoneNumber, dob, email, password)
+            self.enterRegisterForm(staffId, userId, phoneNumber, dob, email, password)
             confirm = self.wait.until(
                 EC.visibility_of_element_located(
                     (AppiumBy.ACCESSIBILITY_ID,
                      'User already exists')
                 )
             )
-            print(confirm.get_attribute('content-desc'))
             actual_msg = confirm.get_attribute('content-desc')
             expected_msg = "User already exists"
             assert expected_msg == actual_msg, f"Expected: '{expected_msg}', but got: '{actual_msg}'"
@@ -87,7 +88,7 @@ class RegisterPage:
                 EC.element_to_be_clickable((AppiumBy.ACCESSIBILITY_ID, "Sign in"))
             ).click()
             self.driver.press_keycode(AndroidKey.BACK)
-            self.enterValueOnForm(staffId, userId, phoneNumber, dob, email, password)
+            self.enterRegisterForm(staffId, userId, phoneNumber, dob, email, password)
             confirm = self.wait.until(
                 EC.visibility_of_element_located(
                     (AppiumBy.ACCESSIBILITY_ID,

@@ -1,17 +1,17 @@
 import json
 
-from pages.Custom import randomString, getCredentials, parentPath
+from pages.Custom import randomString, getCredentials, parentPath, dataPath
 from utils.facility_app import get_driver_app
 from pages.LoginPage import TestLoginPage
 from pages.AdsPage import AdvertisementPage
 
 def test_create_advertisement_successfully():
-    ads_path = parentPath("data/ads_test_data.json")
+    ads_path = dataPath("facility_app", "ads_test_data.json")
     driver = get_driver_app()
     login = TestLoginPage(driver)
     user = getCredentials()
-    login.test_sign_in_btn("Sign in")
-    login.test_login_successful(user['username'], user['password'])
+    login.signInBtn("Sign in")
+    login.userLoginSuccessful(user['username'], user['password'])
     ads_page = AdvertisementPage(driver)
     random_str = randomString(10)
     with open(ads_path) as json_file:

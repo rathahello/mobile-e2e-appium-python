@@ -11,6 +11,9 @@ from datetime import datetime
 def parentPath(path):
     return Path(__file__).resolve().parent.parent / path
 
+def dataPath(subFolder, filename):
+    return parentPath(f"data/{subFolder}/{filename}")
+
 def randomString(length):
     letters = string.ascii_lowercase + string.digits
     return ''.join(random.choice(letters) for i in range(length))
@@ -34,7 +37,6 @@ def getCurrentDate():
 
 def getCurrentDateTime():
     current_datetime = datetime.now().strftime("%d-%m-%y %H:%M:%S")
-    print("Current Date and Time", current_datetime)
     return current_datetime
 
 class CustomPage:
@@ -95,17 +97,15 @@ class CustomPage:
         element.click()
         element.clear()
         element.send_keys(value)
-    def customXpathBtnClick(self, label):
-        element = self.wait.until(
-            EC.element_to_be_clickable(
-                (AppiumBy.XPATH, f'//android.widget.Button[contains(@content-desc, "{label}")]')
-            )
-        )
-        element.click()
     def customXpathClick(self, xpath, label):
         element = self.wait.until(
             EC.element_to_be_clickable(
                 (AppiumBy.XPATH, f'//{xpath}[contains(@content-desc, "{label}")]')
             )
+        )
+        element.click()
+    def customXpathClickLabel(self, label):
+        element = self.wait.until(
+            EC.element_to_be_clickable((AppiumBy.XPATH, f"//*[contains(@content-desc, '{label}')]"))
         )
         element.click()

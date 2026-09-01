@@ -1,0 +1,16 @@
+{
+  "delete_reason": [
+    "No longer need the app",
+    "Property sold",
+    "Found another app",
+    "Not satisfied",
+    "Privacy concern",
+    "Duplicate account",
+    "Other"
+  ],
+  "user_role": [
+    "Administrator",
+    "Operator",
+    "Viewer"
+  ]
+}
