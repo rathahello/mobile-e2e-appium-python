@@ -1,4 +1,3 @@
-import os
 from appium.webdriver.common.appiumby import AppiumBy
 import time
 from appium.webdriver.extensions.android.nativekey import AndroidKey
@@ -6,7 +5,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import  expected_conditions as EC
 from pages.Custom import CustomPage, getCurrentDate
 
-os.makedirs("screenshots", exist_ok=True)
 currentDate = getCurrentDate()
 class AdvertisementPage:
     def __init__(self, driver):
@@ -15,33 +13,42 @@ class AdvertisementPage:
         self.wait = WebDriverWait(self.driver, 20)
 
     def addPhoto(self, numOfPhoto):
-        self.custom_page.customScrollToEnd(10)
-        self.custom_page.customScrollView("Add Photos")
-        self.custom_page.customAccessibleClick("Gallery")
-        access_photo = self.driver.find_element(AppiumBy.ID, 'com.android.permissioncontroller:id/permission_message')
-        if access_photo.is_displayed():
-            self.wait.until(
-                EC.element_to_be_clickable(
-                    (AppiumBy.ID, 'com.android.permissioncontroller:id/permission_allow_button')
-                )
-            ).click()
-        self.wait.until(
+        self.custom_page.scrollDown(100, 100, 200, 1000, 3.0)
+        element = self.wait.until(
             EC.element_to_be_clickable(
-                (AppiumBy.ANDROID_UIAUTOMATOR,
-                 'new UiSelector().className("android.widget.LinearLayout").instance(9)')
+                (AppiumBy.XPATH, '//*[@content-desc="Add Photos"]')
             )
-        ).click()
-        for i in range(numOfPhoto):
-            print("Photo Index ", i)
+        )
+        if element.is_displayed():
+            element.click()
+            self.custom_page.customAccessibleClick("Gallery")
+            # access_photo = self.wait.until(
+            #     EC.visibility_of_element_located(
+            #         (AppiumBy.ID, 'com.android.permissioncontroller:id/permission_message')
+            #     )
+            # )
+            # if access_photo.is_displayed():
+            #     self.wait.until(
+            #         EC.element_to_be_clickable(
+            #             (AppiumBy.ID, 'com.android.permissioncontroller:id/permission_allow_button')
+            #         )
+            #     ).click()
             self.wait.until(
                 EC.element_to_be_clickable(
                     (AppiumBy.ANDROID_UIAUTOMATOR,
-                f'new UiSelector().resourceId("com.sec.android.gallery3d:id/deco_view_layout").instance({i})')
+                     'new UiSelector().className("android.widget.LinearLayout").instance(9)')
                 )
             ).click()
-        self.wait.until(
-            EC.element_to_be_clickable((AppiumBy.ID, 'com.sec.android.gallery3d:id/action_done'))
-        ).click()
+            for i in range(numOfPhoto):
+                self.wait.until(
+                    EC.element_to_be_clickable(
+                        (AppiumBy.ANDROID_UIAUTOMATOR,
+                    f'new UiSelector().resourceId("com.sec.android.gallery3d:id/deco_view_layout").instance({i})')
+                    )
+                ).click()
+            self.wait.until(
+                EC.element_to_be_clickable((AppiumBy.ID, 'com.sec.android.gallery3d:id/action_done'))
+            ).click()
 
     def createAds(self,
                   numOfPhoto, title, price, monthlyPayment,
@@ -60,6 +67,7 @@ class AdvertisementPage:
                         (AppiumBy.XPATH, '//android.widget.ImageView[@content-desc="Land"]')
                     )
                 ).click()
+            # Add photo for ads creation
             self.addPhoto(numOfPhoto)
             # Properties section
             self.custom_page.customUiAutoIndexValue(0, title)
@@ -125,8 +133,8 @@ class AdvertisementPage:
                 )
             )
             if confirm_btn.is_displayed():
+                self.custom_page.generate_screenshot("create_ads_success_" + currentDate)
                 self.custom_page.customAccessibleClick("OK")
-            self.custom_page.generate_screenshot("create_ads_success_" + currentDate)
         except Exception as error:
             self.custom_page.generate_screenshot("create_ads_failure_" + currentDate)
             print(error)
@@ -175,13 +183,14 @@ class AdvertisementPage:
             )
             if confirm_delete.is_displayed():
                 self.custom_page.customAccessibleClick("Delete")
-            confirm_msg = self.wait.until(
-                EC.visibility_of_element_located((AppiumBy.ACCESSIBILITY_ID, 'Advertisement is deleted successfully'))
-            )
-            print(confirm_msg.get_attribute('content-desc'))
-            if confirm_msg.is_displayed():
-                self.custom_page.customAccessibleClick("OK")
-            self.custom_page.generate_screenshot("delete_ads_success_" + currentDate)
+                response_msg = self.wait.until(
+                    EC.visibility_of_element_located((AppiumBy.ACCESSIBILITY_ID, 'Advertisement is deleted successfully'))
+                )
+                content_desc = response_msg.get_attribute('content-desc')
+                if response_msg.is_displayed():
+                    print("Confirm Message: ", content_desc)
+                    self.custom_page.generate_screenshot("delete_ads_success_" + currentDate)
+                    self.custom_page.customAccessibleClick("OK")
         except Exception as error:
             self.custom_page.generate_screenshot("delete_ads_failure_" + currentDate)
             print(error)

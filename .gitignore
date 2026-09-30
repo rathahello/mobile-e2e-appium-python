@@ -1,11 +1,33 @@
-#Python virtual environment
+# Python virtual environment
 .venv/
-# Python cache
+venv/
+env/
+
+# Python cache & compiled files
 __pycache__/
-#*.py[code]
-#IDE
+*.py[cod]
+*$py.class
+
+# Pytest cache & test artifacts
+.pytest_cache/
+reports/
+*.html
+
+# IDE & Editor files
 .idea/
-# Ignore apk file
-utils/apk
-# Ignore screenshots
+.vscode/
+*.swp
+*.swo
+
+# Test artifacts (screenshots, recordings, logs)
+screenshots/
 features/screenshots/
+videos/
+*.log
+
+# APK binaries
+utils/apk/
+*.apk
+
+# Environment variables
+.env

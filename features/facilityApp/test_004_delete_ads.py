@@ -7,10 +7,10 @@ driver = get_driver_app()
 login = TestLoginPage(driver)
 user = getCredentials()
 custom_page = CustomPage(driver)
-def test_logout_successfully():
+ads_page = AdvertisementPage(driver)
+def test_user_login_successfully():
     login.signInBtn("Sign in")
     login.userLoginSuccessful(user['username'], user['password'])
 def test_delete_ads():
     custom_page.customAccessibleClick('Profile')
-    ads_page = AdvertisementPage(driver)
     ads_page.deleteAds()

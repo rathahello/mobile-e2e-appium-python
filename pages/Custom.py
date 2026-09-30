@@ -1,3 +1,4 @@
+import base64
 import json
 import random
 import string
@@ -49,6 +50,14 @@ class CustomPage:
         image = parentPath(path)
         self.driver.save_screenshot(image)
 
+    def stop_recording_screen(self, filename):
+        # self.driver.start_recording_screen() => use this method to start recording before the action you want to capture
+        path = "videos/" + filename + ".mp4"
+        get_path = parentPath(path)
+        video_result = self.driver.stop_recording_screen()
+        with open(get_path, "wb") as video:
+            video.write(base64.b64decode(video_result))
+
     def scrollDown(self, left, top, width, height, percent):
         self.driver.execute_script("mobile: scrollGesture", {
             "left": left,
@@ -69,8 +78,7 @@ class CustomPage:
     def customScrollView(self, selector):
         element = self.driver.find_element(
             AppiumBy.ANDROID_UIAUTOMATOR,
-            'new UiScrollable(new UiSelector().scrollable(true))'
-            f'.scrollIntoView(new UiSelector().descriptionContains("{selector}"))'
+            f'new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().descriptionContains("{selector}"))'
         )
         element.click()
     def customAccessibleClick(self, value):
